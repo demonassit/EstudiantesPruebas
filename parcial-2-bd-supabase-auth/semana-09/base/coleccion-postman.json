@@ -1,0 +1,10 @@
+{
+  "info": {
+    "name": "CECyT9 - CRUD Usuarios (plantilla)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:3001" }
+  ],
+  "item": []
+}

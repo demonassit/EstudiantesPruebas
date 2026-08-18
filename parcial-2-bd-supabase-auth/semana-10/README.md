@@ -12,5 +12,7 @@
 
 **Entregable (CORTE 2, compartido):** reporte de pruebas de integración ejecutadas (login + CRUD protegido) + colección Postman actualizada.
 
+**Archivos base:** `base/coleccion-postman-actualizada.json` (colección vacía) + `base/reporte-pruebas-integracion.md` (plantilla de 4 casos).
+
 ---
 La rúbrica de esta práctica la tiene tu docente por separado.
