@@ -12,5 +12,7 @@
 
 **Entregable (CORTE 3, compartido):** informe final de calidad ISO 9126 — entregable integrador final de todo el proyecto.
 
+**Archivo base:** `base/informe-final-calidad.md` (secciones vacías).
+
 ---
 La rúbrica de esta práctica la tiene tu docente por separado.
