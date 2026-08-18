@@ -12,5 +12,7 @@
 
 **Entregable:** plan de pruebas preliminar (borrador).
 
+**Archivo base:** `base/plan-pruebas-template.md` (secciones vacías, llénalas tú).
+
 ---
 La rúbrica de esta práctica la tiene tu docente por separado.
