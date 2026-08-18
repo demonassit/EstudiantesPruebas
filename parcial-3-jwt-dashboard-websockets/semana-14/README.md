@@ -12,5 +12,7 @@
 
 **Entregable:** reporte de Práctica 6 (métricas ISO 9126 del proyecto real) + reporte de pruebas de integración y de usuario.
 
+**Archivo base:** `base/reporte-practica6-integracion-usuario.md` (secciones vacías).
+
 ---
 La rúbrica de esta práctica la tiene tu docente por separado.
