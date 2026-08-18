@@ -12,5 +12,7 @@
 
 **Entregable:** 3 casos de prueba de unidad en formato oficial.
 
+**Archivo base:** `base/casos-prueba-unidad.md` (3 casos, campos vacíos).
+
 ---
 La rúbrica de esta práctica la tiene tu docente por separado.
