@@ -14,5 +14,9 @@
 
 **Archivos base:** `base/coleccion-postman-actualizada.json` (colección vacía) + `base/reporte-pruebas-integracion.md` (plantilla de 4 casos).
 
+**Ejercicio complementario (opcional):** `base/ejercicio-integracion-jest/` — pruebas de integración reales con Jest + Supertest sobre una mini API de login + ruta protegida. Ver su `README-ejercicio.md`.
+
+**Plantilla para llevar el control de tus casos:** `docs/plantilla-pruebas-integracion.xlsx` (Excel, con columna de "¿caso negativo?" y menú desplegable de estado) — cópiala a tu carpeta `artefactos/reportes/`.
+
 ---
 La rúbrica de esta práctica la tiene tu docente por separado.

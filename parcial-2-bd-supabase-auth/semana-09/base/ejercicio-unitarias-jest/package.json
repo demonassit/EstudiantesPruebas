@@ -1,0 +1,11 @@
+{
+  "name": "ejercicio-unitarias-jest",
+  "version": "1.0.0",
+  "description": "Ejercicio complementario (no oficial): pruebas unitarias reales con Jest sobre las validaciones del CRUD de usuarios diseñadas en semana 6-7.",
+  "scripts": {
+    "test": "jest"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}

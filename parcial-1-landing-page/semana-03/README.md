@@ -10,5 +10,7 @@
 
 **Entregable:** reporte de Práctica 2 con clasificación + evidencia de una prueba ejecutada manualmente.
 
+**Archivos base:** `base/checklist-clasificacion-niveles.md` (checklist para decidir el nivel de cada caso) + `base/reporte-practica2.md` (plantilla del reporte, campos vacíos).
+
 ---
 La rúbrica de esta práctica la tiene tu docente por separado.
