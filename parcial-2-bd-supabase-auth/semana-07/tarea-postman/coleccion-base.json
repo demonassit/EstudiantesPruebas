@@ -1,0 +1,924 @@
+{
+  "info": {
+    "name": "CECyT9 - Semana 7 - Registro, Login y Autorización",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://proyectobackcecyt9.onrender.com"
+    },
+    {
+      "key": "correo_admin",
+      "value": "PEDIR-AL-DOCENTE"
+    },
+    {
+      "key": "contrasena_admin",
+      "value": "PEDIR-AL-DOCENTE"
+    },
+    {
+      "key": "taller_id_inexistente",
+      "value": "00000000-0000-0000-0000-000000000000"
+    },
+    {
+      "key": "taller_id",
+      "value": ""
+    },
+    {
+      "key": "asistencia_id",
+      "value": ""
+    },
+    {
+      "key": "boleta",
+      "value": ""
+    },
+    {
+      "key": "taller_prueba_id",
+      "value": ""
+    },
+    {
+      "key": "mensaje_error_login",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "00 - Preparación",
+      "item": [
+        {
+          "name": "P-01 GET / (servidor vivo)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                ""
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Mensaje de bienvenida', () => {",
+                  "  pm.expect(pm.response.json().mensaje).to.include('CECyT 9');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "P-02 GET /api/talleres (obtener un taller real)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/talleres",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "talleres"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const talleres = pm.response.json();",
+                  "pm.test('Regresa una lista con al menos un taller', () => {",
+                  "  pm.expect(talleres).to.be.an('array').that.is.not.empty;",
+                  "});",
+                  "pm.collectionVariables.set('taller_id', talleres[0].id);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "01 - Registro de asistencia",
+      "item": [
+        {
+          "name": "R-01 Registro válido",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/asistencias",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "asistencias"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"taller_id\": \"{{taller_id}}\",\n  \"nombre_alumno\": \"PRUEBA-POSTMAN {{$randomFirstName}}\",\n  \"boleta\": \"{{boleta}}\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Boleta de 10 dígitos distinta en cada corrida",
+                  "const boleta = '2026' + Math.floor(100000 + Math.random() * 900000);",
+                  "pm.collectionVariables.set('boleta', boleta);"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201 Created', () => pm.response.to.have.status(201));",
+                  "const body = pm.response.json();",
+                  "pm.test('Regresa el registro creado con id', () => pm.expect(body).to.have.property('id'));",
+                  "pm.test('Guarda la boleta enviada', () => pm.expect(body.boleta).to.eql(pm.collectionVariables.get('boleta')));",
+                  "pm.test('Pertenece al taller enviado', () => pm.expect(body.taller_id).to.eql(pm.collectionVariables.get('taller_id')));",
+                  "pm.test('Tiene fecha de registro', () => pm.expect(body.fecha_registro).to.be.a('string'));",
+                  "pm.collectionVariables.set('asistencia_id', body.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "R-02 Falta la boleta",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/asistencias",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "asistencias"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"taller_id\": \"{{taller_id}}\",\n  \"nombre_alumno\": \"PRUEBA-POSTMAN Sin Boleta\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400 Bad Request', () => pm.response.to.have.status(400));",
+                  "pm.test('Explica qué campos faltan', () => pm.expect(pm.response.json().error).to.include('obligatorios'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "R-03 Cuerpo vacío",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/asistencias",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "asistencias"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// TODO: programa aquí las pruebas de este caso (ver la guía)"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "R-04 Taller que no existe",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/asistencias",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "asistencias"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"taller_id\": \"{{taller_id_inexistente}}\",\n  \"nombre_alumno\": \"PRUEBA-POSTMAN Taller Fantasma\",\n  \"boleta\": \"2026000000\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// TODO: programa aquí las pruebas de este caso (ver la guía)"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "R-05 Misma boleta en el mismo taller (duplicado)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/asistencias",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "asistencias"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"taller_id\": \"{{taller_id}}\",\n  \"nombre_alumno\": \"PRUEBA-POSTMAN Duplicado\",\n  \"boleta\": \"{{boleta}}\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// TODO: programa aquí las pruebas de este caso (ver la guía)"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "R-06 Boleta con letras",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/asistencias",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "asistencias"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"taller_id\": \"{{taller_id}}\",\n  \"nombre_alumno\": \"PRUEBA-POSTMAN Boleta Invalida\",\n  \"boleta\": \"ABC123\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// TODO: programa aquí las pruebas de este caso (ver la guía)"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "02 - Inicio de sesión",
+      "item": [
+        {
+          "name": "L-01 Sin correo ni contraseña",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// TODO: programa aquí las pruebas de este caso (ver la guía)"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "L-02 Correo no registrado",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"nadie@cecyt9.ipn.mx\",\n  \"contrasena\": \"loquesea\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// TODO: programa aquí las pruebas de este caso (ver la guía)"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "L-03 Contraseña incorrecta",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"{{correo_admin}}\",\n  \"contrasena\": \"contrasena-equivocada\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// TODO: programa aquí las pruebas de este caso (ver la guía)"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "L-04 Credenciales correctas",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"{{correo_admin}}\",\n  \"contrasena\": \"{{contrasena_admin}}\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "pm.test('Rol de administrador', () => pm.expect(body.rol).to.eql('admin'));",
+                  "pm.test('No expone el hash de la contraseña', () => pm.expect(body).to.not.have.property('contrasena_hash'));",
+                  "const cookie = pm.response.headers.get('Set-Cookie') || '';",
+                  "pm.test('Entrega cookie de sesión connect.sid', () => pm.expect(cookie).to.include('connect.sid='));",
+                  "pm.test('La cookie es HttpOnly', () => pm.expect(cookie).to.include('HttpOnly'));",
+                  "pm.test('La sesión expira en máximo 8 horas', () => {",
+                  "  const m = cookie.match(/Expires=([^;]+)/i);",
+                  "  if (!m) return; // sin Expires = cookie de sesión del navegador, aceptable",
+                  "  const horas = (new Date(m[1]) - new Date()) / 36e5;",
+                  "  pm.expect(horas).to.be.at.most(8);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "L-05 GET /api/auth/me con sesión",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/auth/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "me"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// TODO: programa aquí las pruebas de este caso (ver la guía)"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "03 - Acceso autorizado (con sesión)",
+      "item": [
+        {
+          "name": "S-01 Ver asistencias del taller",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/talleres/{{taller_id}}/asistencias",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "talleres",
+                "{{taller_id}}",
+                "asistencias"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// TODO: programa aquí las pruebas de este caso (ver la guía)"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "S-02 Crear taller de prueba",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/talleres",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "talleres"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"PRUEBA-POSTMAN Taller temporal\",\n  \"instructor\": \"Postman\",\n  \"fecha\": \"2026-12-01\",\n  \"cupo\": 5\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// TODO: programa aquí las pruebas de este caso (ver la guía)"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "S-03 Eliminar taller de prueba",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/talleres/{{taller_prueba_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "talleres",
+                "{{taller_prueba_id}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// TODO: programa aquí las pruebas de este caso (ver la guía)"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "S-04 Cerrar sesión",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/auth/logout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "logout"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// TODO: programa aquí las pruebas de este caso (ver la guía)"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "S-05 GET /api/auth/me después del logout",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/auth/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "me"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// TODO: programa aquí las pruebas de este caso (ver la guía)"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "04 - Errores de autorización (sin sesión)",
+      "item": [
+        {
+          "name": "A-01 Ver asistencias sin sesión",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/talleres/{{taller_id}}/asistencias",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "talleres",
+                "{{taller_id}}",
+                "asistencias"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Sin sesión responde 401 (no autenticado)', () => pm.response.to.have.status(401));",
+                  "pm.test('No entrega datos protegidos', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.not.be.an('array');",
+                  "  pm.expect(body).to.have.property('error');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A-02 Crear taller sin sesión",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/talleres",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "talleres"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"PRUEBA-POSTMAN No deberia crearse\",\n  \"fecha\": \"2026-12-01\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// TODO: programa aquí las pruebas de este caso (ver la guía)"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A-03 Editar taller sin sesión",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/talleres/{{taller_id_inexistente}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "talleres",
+                "{{taller_id_inexistente}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"PRUEBA-POSTMAN Editado\",\n  \"fecha\": \"2026-12-01\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// TODO: programa aquí las pruebas de este caso (ver la guía)"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A-04 Eliminar taller sin sesión",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/talleres/{{taller_id_inexistente}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "talleres",
+                "{{taller_id_inexistente}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// TODO: programa aquí las pruebas de este caso (ver la guía)"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A-05 Cookie de sesión falsificada",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "connect.sid=s%3Ainventada.firmafalsa"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/talleres/{{taller_id}}/asistencias",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "talleres",
+                "{{taller_id}}",
+                "asistencias"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// TODO: programa aquí las pruebas de este caso (ver la guía)"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A-06 Resumen del panel de administrador sin sesión",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/admin/resumen",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "resumen"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// TODO: programa aquí las pruebas de este caso (ver la guía)"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
