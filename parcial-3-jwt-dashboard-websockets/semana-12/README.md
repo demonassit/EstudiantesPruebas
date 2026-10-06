@@ -12,7 +12,5 @@
 
 **Entregable:** guion de pruebas de sistema/rendimiento (casos + método de medición) listo para ejecutarse.
 
-**Archivo base:** `base/guion-pruebas-rendimiento-seguridad.md` (4 casos, campos vacíos).
-
 ---
 La rúbrica de esta práctica la tiene tu docente por separado.

@@ -12,7 +12,5 @@
 
 **Entregable:** tabla de evaluación ISO 9126 de la app de ejemplo, con justificación por característica.
 
-**Archivo base:** `base/evaluacion-iso9126-ejemplo.md` (6 secciones vacías).
-
 ---
 La rúbrica de esta práctica la tiene tu docente por separado.

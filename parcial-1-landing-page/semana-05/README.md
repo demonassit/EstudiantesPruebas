@@ -8,7 +8,5 @@
 
 **Entregable (CORTE 1, compartido):** plan de pruebas final + reporte de Práctica 3.
 
-**Archivo base:** `base/plan-pruebas-final-template.md` (continúa el borrador de la semana 4; secciones 9-11 vacías).
-
 ---
 La rúbrica de esta práctica la tiene tu docente por separado.

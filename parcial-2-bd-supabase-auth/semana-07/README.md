@@ -10,7 +10,5 @@
 
 **Entregable:** reporte de Práctica 4 con el catálogo de casos de prueba de unidad ampliado.
 
-**Archivo base:** `base/catalogo-casos-prueba.md` (continúa la semana 6 con 3 casos más, campos vacíos).
-
 ---
 La rúbrica de esta práctica la tiene tu docente por separado.

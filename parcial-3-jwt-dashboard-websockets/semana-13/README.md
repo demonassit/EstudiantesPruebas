@@ -12,7 +12,5 @@
 
 **Entregable:** reporte de Práctica 5 con resultados de pruebas de sistema/rendimiento sobre JWT, captcha y WebSocket.
 
-**Archivo base:** `base/reporte-practica5-pruebas.md` (4 secciones vacías).
-
 ---
 La rúbrica de esta práctica la tiene tu docente por separado.

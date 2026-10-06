@@ -12,9 +12,5 @@
 
 **Entregable:** 3 casos de prueba de unidad en formato oficial.
 
-**Archivo base:** `base/casos-prueba-unidad.md` (3 casos, campos vacíos).
-
-**Plantilla para llevar el control de tus casos:** `docs/plantilla-casos-prueba-unitaria.xlsx` (Excel, con menú desplegable de estado) — cópiala a tu carpeta `artefactos/casos-de-prueba/`.
-
 ---
 La rúbrica de esta práctica la tiene tu docente por separado.

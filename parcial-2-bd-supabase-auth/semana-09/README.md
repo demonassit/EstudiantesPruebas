@@ -12,9 +12,5 @@
 
 **Entregable:** reporte de ejecución de pruebas unitarias sobre el CRUD real + colección Postman inicial con las peticiones probadas.
 
-**Archivos base:** `base/coleccion-postman.json` (colección vacía, impórtala en Postman) + `base/reporte-ejecucion.md` (plantilla de 3 casos).
-
-**Ejercicio complementario (opcional):** `base/ejercicio-unitarias-jest/` — lleva tus casos de prueba de unidad a código real con Jest. Ver su `README-ejercicio.md`.
-
 ---
 La rúbrica de esta práctica la tiene tu docente por separado.
